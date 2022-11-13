@@ -20,7 +20,7 @@ class GetData
     public function __construct(Collection|Builder $data, array $columns, bool $isDataModelBuilder)
     {
         $this->data = $data;
-        $this->columns = $columns;
+        $this->columns = collect($columns);
         $this->isDataModelBuilder = $isDataModelBuilder;
         return $this;
     }
@@ -37,7 +37,19 @@ class GetData
 
     public function build()
     {
-        dd($this->data);
+
+//        dd($this->columns->pluck('fieldName'));
+        $getFieldNames = $this->columns->pluck('fieldName')->toArray();
+        $out = $this->data->map(function($data) use ($getFieldNames) {
+            $out = [];
+            foreach ($getFieldNames as $item){
+                if($data->$item)
+                    $out[$item] = $data->$item;
+            }
+            return $out;
+        });
+
+//        dd($out);
 
         return ':)';
     }
