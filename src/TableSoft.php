@@ -2,27 +2,28 @@
 
 namespace Irpcpro\TableSoft;
 
-use Illuminate\Database\Eloquent\Model;
+use Dotenv\Repository\Adapter\ArrayAdapter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Irpcpro\TableSoft\Features\DefineColumn;
-use mysql_xdevapi\Table;
-use function PHPUnit\Framework\isNull;
+use Irpcpro\TableSoft\Features\GetData;
 
 class TableSoft {
 
     private $data;
-    private $isDataModelCollection = false;
+    private $isDataModelBuilder = false;
     private $columns = [];
+    private $paginate = 0;
 
     /**
-     * @param Collection|Model $data
+     * @param Collection|Builder $data
      * @return TableSoft
      * */
-    public function data(Collection|Model $data): TableSoft
+    public function data(Collection|Builder $data): TableSoft
     {
         // get type of $data. is Model-Collection or Collection
-        if($data instanceof Model)
-            $this->isDataModelCollection = true;
+        if($data instanceof Builder)
+            $this->isDataModelBuilder = true;
 
         // get data
         $this->data = $data;
@@ -60,6 +61,27 @@ class TableSoft {
 
         $this->columns[] = new DefineColumn($title, $field, $sort, $function);
         return $this;
+    }
+
+    /**
+     * @param int $number number of item per page. if 0 paginate never set
+     * @return TableSoft
+     * */
+    public function paginate(int $number): TableSoft
+    {
+        $this->paginate = $number;
+        return $this;
+    }
+
+    public function get()
+    {
+        $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder);
+
+        if($this->paginate)
+            $build_data = $build_data->paginate($this->paginate);
+
+        $build_data = $build_data->build();
+        return $build_data;
     }
 
 }
