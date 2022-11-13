@@ -2,7 +2,7 @@
 
 namespace Irpcpro\TableSoft\Features;
 
-class DefineColumn
+class DefineColumn extends ColumnFields
 {
     public $title;
     public $fieldName;
