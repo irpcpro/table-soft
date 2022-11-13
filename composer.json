@@ -1,0 +1,19 @@
+{
+    "name": "irpcpro/table-soft",
+    "description": "A package for managing table data - Bugloos Test",
+    "authors": [
+        {
+            "name": "irpcpro",
+            "email": "designer.pcpro@yahoo.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Irpcpro\\TableSoft\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "~5"
+    }
+}
