@@ -27,7 +27,11 @@ class GetData
 
     public function paginate($number): GetData
     {
-        $this->data = $this->data->paginate($number);
+        if($this->isDataModelBuilder)
+            $this->data = $this->data->paginate($number);
+        else
+            $this->data = $this->data->paginateList($number);
+
         return $this;
     }
 

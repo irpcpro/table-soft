@@ -19,7 +19,7 @@ class TableSoftServiceProvider extends ServiceProvider {
     public function boot()
     {
         // add paginate to illuminate support collection
-        Collection::macro('paginate', function($perPage, $total = null, $page = null, $pageName = 'page') {
+        Collection::macro('paginateList', function($perPage, $total = null, $page = null, $pageName = 'page') {
             $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
             return new LengthAwarePaginator(
                 $this->forPage($page, $perPage),
