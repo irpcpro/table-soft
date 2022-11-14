@@ -28,5 +28,8 @@ abstract class ColumnFields
      * @var string
      * */
     public $value;
-
+    /**
+     * @var int
+     * */
+    public $colSpan;
 }
