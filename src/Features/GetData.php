@@ -3,14 +3,18 @@
 namespace Irpcpro\TableSoft\Features;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use PhpParser\Node\Expr\Array_;
+use JetBrains\PhpStorm\ArrayShape;
 
 class GetData
 {
     public $data;
     public $columns;
     public $isDataModelBuilder;
+
+    private $tableDataHeader;
+    private $tableDataBody;
 
     /**
      * @param Collection|Builder $data
@@ -25,33 +29,103 @@ class GetData
         return $this;
     }
 
-    public function paginate($number): GetData
+    /**
+     * @param int $number
+     * */
+    private function paginate(int $number): void
     {
-        if($this->isDataModelBuilder)
-            $this->data = $this->data->paginate($number);
-        else
-            $this->data = $this->data->paginateList($number);
+        if ($this->isDataModelBuilder)
+            $this->tableDataBody = collect($this->tableDataBody);
 
-        return $this;
+        $this->tableDataBody = $this->tableDataBody->paginateList($number);
+
     }
 
-    public function build()
+    /**
+     * @return array
+     * */
+    private function getFieldNames(): array
     {
+        return $this->columns->pluck('fieldName')->toArray();
+    }
 
-//        dd($this->columns->pluck('fieldName'));
-        $getFieldNames = $this->columns->pluck('fieldName')->toArray();
-        $out = $this->data->map(function($data) use ($getFieldNames) {
-            $out = [];
-            foreach ($getFieldNames as $item){
-                if($data->$item)
-                    $out[$item] = $data->$item;
+    /**
+     * @return Collection
+     * */
+    private function getColumnsGroupByFieldName(): Collection
+    {
+        return $this->columns->groupBy('fieldName');
+    }
+
+    /**
+     * @return Collection
+     * */
+    private function makeTableHeader(): Collection
+    {
+        $headColumns = collect([]);
+
+        foreach($this->columns as $item)
+            $headColumns->push(new DefineHeaderColumn($item));
+
+        return $headColumns;
+    }
+
+    /**
+     * @return Collection
+     * */
+    private function makeTableBody(): Collection
+    {
+        // get field names
+        $getFieldNames = $this->getFieldNames();
+        $columnsGroupBy = $this->getColumnsGroupByFieldName();
+
+        // if it's builder, get the data
+        if($this->isDataModelBuilder)
+            $this->data = $this->data->get();
+
+        // map on data
+        return $this->data->map(function ($data) use ($getFieldNames, $columnsGroupBy) {
+            // data filtered
+            $dataFiltered = collect([]);
+
+            // get data row item
+            foreach ($getFieldNames as $item) {
+                // get field
+                $columnsetting = $columnsGroupBy->get($item);
+                if($columnsetting && $data->$item){
+                    // get first of column setting
+                    $columnsetting = $columnsetting->first();
+                    $value = $data->$item;
+
+                    // return edited array
+                    $dataFiltered[$item] = ($columnsetting->value)($value);
+                }
             }
-            return $out;
+
+            // remake array
+            return $dataFiltered;
         });
+    }
 
-//        dd($out);
+    /**
+     * @param int $paginate
+     * @return array
+     */
+    #[ArrayShape([
+        'header' => [DefineHeaderColumn::class],
+        'body' => (Collection::class | LengthAwarePaginator::class)
+    ])] public function build(int $paginate = 0): array
+    {
+        $this->tableDataHeader = $this->makeTableHeader();
+        $this->tableDataBody = $this->makeTableBody();
 
-        return ':)';
+        if($paginate)
+            $this->paginate($paginate);
+
+        return [
+            'header' => $this->tableDataHeader,
+            'body' => $this->tableDataBody
+        ];
     }
 
 }

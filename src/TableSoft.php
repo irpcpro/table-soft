@@ -2,11 +2,13 @@
 
 namespace Irpcpro\TableSoft;
 
-use Dotenv\Repository\Adapter\ArrayAdapter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Irpcpro\TableSoft\Features\DefineColumn;
+use Irpcpro\TableSoft\Features\DefineHeaderColumn;
 use Irpcpro\TableSoft\Features\GetData;
+use JetBrains\PhpStorm\ArrayShape;
 
 class TableSoft {
 
@@ -64,6 +66,17 @@ class TableSoft {
     }
 
     /**
+     * @param int $size
+     * @return TableSoft
+     * */
+    public function setColSpan(int $size): TableSoft
+    {
+        if(!empty($this->columns))
+            end($this->columns)->setColSpan($size);
+        return $this;
+    }
+
+    /**
      * @param int $number number of item per page. if 0 paginate never set
      * @return TableSoft
      * */
@@ -73,14 +86,17 @@ class TableSoft {
         return $this;
     }
 
-    public function get()
+
+    /**
+     *
+     * */
+    #[ArrayShape([
+        'header' => [DefineHeaderColumn::class],
+        'body' => Collection::class | LengthAwarePaginator::class
+    ])] public function get(): array
     {
         $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder);
-
-        if($this->paginate)
-            $build_data = $build_data->paginate($this->paginate);
-
-        $build_data = $build_data->build();
+        $build_data = $build_data->build($this->paginate);
         return $build_data;
     }
 

@@ -10,6 +10,7 @@ class DefineColumn extends ColumnFields
     public $sort;
     public $sortBy;
     public $value;
+    public $colSpan;
 
     public function __construct($title, $field, $sort = null, $function = null)
     {
@@ -22,6 +23,14 @@ class DefineColumn extends ColumnFields
         }
         if($function)
             $this->value = $function;
+    }
+
+    /**
+     * @param int $size
+     * */
+    public function setColSpan($size)
+    {
+        $this->colSpan = $size;
     }
 
 }
