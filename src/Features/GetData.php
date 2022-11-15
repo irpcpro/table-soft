@@ -13,7 +13,7 @@ class GetData
     public $columns;
     public $isDataModelBuilder;
 
-    private $tableDataHeader;
+    private $tableDataHead;
     private $tableDataBody;
 
     /**
@@ -37,8 +37,8 @@ class GetData
         if ($this->isDataModelBuilder)
             $this->tableDataBody = collect($this->tableDataBody);
 
-        $this->tableDataBody = $this->tableDataBody->paginateList($number);
-
+        if(count($this->columns))
+            $this->tableDataBody = $this->tableDataBody->paginateList($number);
     }
 
     /**
@@ -60,12 +60,15 @@ class GetData
     /**
      * @return Collection
      * */
-    private function makeTableHeader(): Collection
+    private function makeTableHead(): Collection
     {
         $headColumns = collect([]);
 
-        foreach($this->columns as $item)
-            $headColumns->push(new DefineHeaderColumn($item));
+        if(count($this->columns))
+            foreach($this->columns as $item)
+                $headColumns->push(new DefineHeaderColumn($item));
+        else
+            return collect([]);
 
         return $headColumns;
     }
@@ -83,6 +86,10 @@ class GetData
         if($this->isDataModelBuilder)
             $this->data = $this->data->get();
 
+        // return empty when didn't set any columns
+        if(count($this->columns) == 0)
+            return collect([]);
+
         // map on data
         return $this->data->map(function ($data) use ($getFieldNames, $columnsGroupBy) {
             // data filtered
@@ -98,7 +105,7 @@ class GetData
                     $value = $data->$item;
 
                     // return edited array
-                    $dataFiltered[$item] = ($columnsetting->value)($value);
+                    $dataFiltered[$item] = new DefineBodyColumn(($columnsetting->value)($value), $columnsetting);
                 }
             }
 
@@ -112,19 +119,21 @@ class GetData
      * @return array
      */
     #[ArrayShape([
-        'header' => [DefineHeaderColumn::class],
-        'body' => (Collection::class | LengthAwarePaginator::class)
+        'head' => [DefineHeaderColumn::class],
+        'body' => (Collection::class | LengthAwarePaginator::class),
+        'exists' => 'bool'
     ])] public function build(int $paginate = 0): array
     {
-        $this->tableDataHeader = $this->makeTableHeader();
+        $this->tableDataHead = $this->makeTableHead();
         $this->tableDataBody = $this->makeTableBody();
 
         if($paginate)
             $this->paginate($paginate);
 
         return [
-            'header' => $this->tableDataHeader,
-            'body' => $this->tableDataBody
+            'head' => $this->tableDataHead,
+            'body' => $this->tableDataBody,
+            'exists' => (bool) count($this->tableDataBody)
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace Irpcpro\TableSoft;
 
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -14,6 +15,9 @@ class TableSoft {
 
     private $data;
     private $isDataModelBuilder = false;
+    /**
+     * @var DefineColumn[]
+     * */
     private $columns = [];
     private $paginate = 0;
 
@@ -72,7 +76,19 @@ class TableSoft {
     public function setColSpan(int $size): TableSoft
     {
         if(!empty($this->columns))
-            end($this->columns)->setColSpan($size);
+            end($this->columns)->setColSpanColumn($size);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function searchable(): TableSoft
+    {
+        if(!empty($this->columns))
+            end($this->columns)->setSearchableColumn();
+
         return $this;
     }
 
@@ -86,13 +102,10 @@ class TableSoft {
         return $this;
     }
 
-
-    /**
-     *
-     * */
     #[ArrayShape([
-        'header' => [DefineHeaderColumn::class],
-        'body' => Collection::class | LengthAwarePaginator::class
+        'head' => [DefineHeaderColumn::class],
+        'body' => Collection::class | LengthAwarePaginator::class,
+        'exists' => 'bool'
     ])] public function get(): array
     {
         $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder);
