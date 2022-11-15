@@ -11,6 +11,7 @@ class DefineColumn extends ColumnFields
     public $sortBy;
     public $value;
     public $colSpan;
+    public $searchable = false;
 
     public function __construct($title, $field, $sort = null, $function = null)
     {
@@ -28,9 +29,18 @@ class DefineColumn extends ColumnFields
     /**
      * @param int $size
      * */
-    public function setColSpan($size)
+    public function setColSpanColumn($size)
     {
         $this->colSpan = $size;
+    }
+
+    /**
+     * set variable
+     * @return void
+     */
+    public function setSearchableColumn()
+    {
+        $this->searchable = true;
     }
 
 }
