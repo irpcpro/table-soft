@@ -19,14 +19,19 @@ class DefineBodyColumn
     /**
      * @var int
      * */
-    public $colSpan;
+    public $width;
+    /**
+     * @var string
+     * */
+    public $widthMeasure;
 
-    public function __construct($value, DefineColumn $data)
+    public function __construct($value, DefineColumn|null $data = null)
     {
-        $this->type = $data->fieldType;
-        $this->name = $data->fieldName;
-        $this->value = $value;
-        $this->colSpan = $data->colSpan ?? null;
+        $this->type = $data->fieldType ?? null;
+        $this->name = $data->fieldName ?? null;
+        $this->value = $value ?? null;
+        $this->width = $data->width ?? null;
+        $this->widthMeasure = $data->widthMeasure ?? null;
     }
 
     /**

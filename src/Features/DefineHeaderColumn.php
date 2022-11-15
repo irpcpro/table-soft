@@ -16,13 +16,18 @@ class DefineHeaderColumn
     /**
      * @var int
      * */
-    public $colSpan;
+    public $width;
+    /**
+     * @var string
+     * */
+    public $widthMeasure;
 
     public function __construct(DefineColumn $data)
     {
         $this->type = $data->fieldType;
         $this->title = $data->title;
-        $this->colSpan = $data->colSpan ?? null;
+        $this->width = $data->width ?? null;
+        $this->widthMeasure = $data->widthMeasure;
     }
 
     /**
