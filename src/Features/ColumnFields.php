@@ -31,5 +31,5 @@ abstract class ColumnFields
     /**
      * @var int
      * */
-    public $colSpan;
+    public $width;
 }

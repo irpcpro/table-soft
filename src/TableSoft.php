@@ -13,13 +13,30 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class TableSoft {
 
+    /**
+     * @var array
+     * */
     private $data;
+    /**
+     * @var bool
+     * */
     private $isDataModelBuilder = false;
     /**
      * @var DefineColumn[]
      * */
-    private $columns = [];
-    private $paginate = 0;
+    private array $columns = [];
+    /**
+     * @var int
+     * */
+    private int $paginate = 0;
+    /**
+     * @var bool
+     * */
+    private bool $rowCounter = false;
+
+
+    private int $lastColumnIndex = 0;
+
 
     /**
      * @param Collection|Builder $data
@@ -41,9 +58,10 @@ class TableSoft {
      * @param string|null $field fieldName:type(int,string,float,date,bool)
      * @param string|object|null $sort sort:sortType(asc,desc) - default asc
      * @param object|null $function the function returns value to overwrite
+     * @param bool $addFirst to add column in the beginning of columns array
      * @return TableSoft
      */
-    public function column(string $title, string $field = null, string|object $sort = null, object $function = null): TableSoft
+    public function column(string $title, string $field = null, string|object $sort = null, object $function = null, bool $addFirst = false): TableSoft
     {
         if($field == null)
             $field = mb_strtolower($title);
@@ -65,18 +83,32 @@ class TableSoft {
         if($function == null)
             $function = function($value){return $value;};
 
-        $this->columns[] = new DefineColumn($title, $field, $sort, $function);
+        // make column data
+        $columnData = new DefineColumn($title, $field, $this->lastColumnIndex++, $sort, $function);
+
+        // add column to array
+        if($addFirst)
+            array_unshift($this->columns, $columnData);
+        else
+            $this->columns[] = $columnData;
+
+        // return class
         return $this;
     }
 
     /**
      * @param int $size
+     * @param string $measure [%,px,..]
      * @return TableSoft
      * */
-    public function setColSpan(int $size): TableSoft
+    public function setWidth(int $size, string $measure = '%'): TableSoft
     {
-        if(!empty($this->columns))
-            end($this->columns)->setColSpanColumn($size);
+        if(!empty($this->columns)){
+            if($this->columns[0]->index == $this->lastColumnIndex - 1)
+                $this->columns[0]->setWidthColumn($size, $measure);
+            else
+                end($this->columns)->setWidthColumn($size, $measure);
+        }
 
         return $this;
     }
@@ -99,6 +131,22 @@ class TableSoft {
     public function paginate(int $number): TableSoft
     {
         $this->paginate = $number;
+        return $this;
+    }
+
+    /**
+     * set counter row to table
+     * @return TableSoft
+     * */
+    public function rowCounter(string $title = 'Row', string $field = null, string|object $sort = null, object $function = null): TableSoft
+    {
+        // just add row counter once
+        if($this->rowCounter == false){
+            $this->rowCounter = true;
+
+            // add column
+            $this->column($title, $field, $sort, $function, true);
+        }
         return $this;
     }
 

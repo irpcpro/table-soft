@@ -10,12 +10,15 @@ class DefineColumn extends ColumnFields
     public $sort;
     public $sortBy;
     public $value;
-    public $colSpan;
+    public $width;
     public $searchable = false;
+    public $index;
+    public $widthMeasure;
 
-    public function __construct($title, $field, $sort = null, $function = null)
+    public function __construct($title, $field, $index, $sort = null, $function = null)
     {
         $this->title = $title;
+        $this->index = $index;
         $this->fieldName = explode(':', $field)[0];
         $this->fieldType = explode(':', $field)[1];
         if($sort != null){
@@ -29,9 +32,10 @@ class DefineColumn extends ColumnFields
     /**
      * @param int $size
      * */
-    public function setColSpanColumn($size)
+    public function setWidthColumn($size, $measure)
     {
-        $this->colSpan = $size;
+        $this->width = $size;
+        $this->widthMeasure = $measure;
     }
 
     /**
