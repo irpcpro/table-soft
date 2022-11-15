@@ -1,6 +1,6 @@
 <?php
 
-namespace Irpcpro\TableSoft\Features;
+namespace Irpcpro\TableSoft\Includes\Columns;
 
 abstract class ColumnFields
 {
@@ -11,11 +11,11 @@ abstract class ColumnFields
     /**
      * @var string
      * */
-    public $fieldName;
+    public $name;
     /**
      * @var string
      * */
-    public $fieldType;
+    public $type;
     /**
      * @var string
      * */
@@ -32,4 +32,19 @@ abstract class ColumnFields
      * @var int
      * */
     public $width;
+    /**
+     * @var string
+     * */
+    public $widthMeasure;
+    /**
+     * @var bool
+     * */
+    public $searchable;
+
+    /**
+     * return value of column when it echos
+     * @return string
+     * */
+    abstract function __toString();
+
 }
