@@ -31,10 +31,6 @@ class TableSoft
      * */
     private int $paginate = 0;
     /**
-     * @var string
-     * */
-    private string $paginateMethodRender;
-    /**
      * @var bool
      * */
     private bool $rowCounter = false;
@@ -50,7 +46,6 @@ class TableSoft
 
     public function __construct()
     {
-        $this->paginateMethodRender = 'pagination::bootstrap-4';
         $this->caching = null;
     }
 
@@ -91,7 +86,7 @@ class TableSoft
                 return $this; // don't add this column
             $type = $explodeField[1];
         }
-        $field = preg_replace('/[^A-Za-z0-9\-]/', '', mb_strtolower($explodeField[0])) . ':' . $type;
+        $field = preg_replace('/[^A-Za-z0-9\-]/', '', $explodeField[0]) . ':' . $type;
 
         // return this field. Input Error
         if (is_object($sort) && $function != [])
@@ -186,13 +181,11 @@ class TableSoft
 
     /**
      * @param int $number number of item per page. if 0 paginate never set
-     * @param string $renderMethod
      * @return TableSoft
      * */
-    public function paginate(int $number = 0, string $renderMethod = 'pagination::bootstrap-4'): TableSoft
+    public function paginate(int $number = 0): TableSoft
     {
         $this->paginate = $number;
-        $this->paginateMethodRender = $renderMethod;
         return $this;
     }
 
@@ -215,7 +208,6 @@ class TableSoft
     public function get(): array
     {
         $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder, $this->caching);
-        $build_data = $build_data->setPaginateMethodRender($this->paginateMethodRender);
         $build_data = $build_data->build($this->paginate);
         return $build_data;
     }

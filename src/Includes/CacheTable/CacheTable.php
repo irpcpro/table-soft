@@ -93,10 +93,6 @@ class CacheTable
 
     public function save($data)
     {
-//        dd(
-//            $data,
-//            (json_decode(json_encode($data), true))
-//        );
         cache([$this->cacheKey => $data], $this::CACHING_TIME);
     }
 }
