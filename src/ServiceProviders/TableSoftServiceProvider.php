@@ -2,6 +2,7 @@
 
 namespace Irpcpro\TableSoft\ServiceProviders;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
@@ -16,6 +17,13 @@ class TableSoftServiceProvider extends ServiceProvider
         $this->app->bind('TableSoft', function () {
             return new TableSoft;
         });
+
+        // add service providers
+//        $this->app->register('Irpcpro\TableSoft\ServiceProviders\TableSoftServiceProvider');
+
+        // add alias
+//        $loader = AliasLoader::getInstance();
+//        $this->app->alias('TableSoft', '\Irpcpro\TableSoft\Facade\TableSoftFacade');
     }
 
     public function boot()
@@ -35,7 +43,6 @@ class TableSoftServiceProvider extends ServiceProvider
 
             return new LengthAwarePaginator($results, $total, $perPage, $page, $options);
         });
-
     }
 
 }
