@@ -1,6 +1,7 @@
 {
     "name": "irpcpro/table-soft",
     "description": "A package for managing table data - Bugloos Test",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "irpcpro",
@@ -18,5 +19,15 @@
     "require": {
         "php": "^8.0",
         "illuminate/support": ">=5.0.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Irpcpro\\TableSoft\\ServiceProviders\\TableSoftServiceProvider"
+            ],
+            "aliases": {
+                "Debugbar": "Irpcpro\\TableSoft\\Facade\\TableSoftFacade"
+            }
+        }
     }
 }
