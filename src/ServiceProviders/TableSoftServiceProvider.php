@@ -21,6 +21,11 @@ class TableSoftServiceProvider extends ServiceProvider
         // add service providers
 //        $this->app->register('Irpcpro\TableSoft\ServiceProviders\TableSoftServiceProvider');
 
+        $this->app->booting(function() {
+            $loader = AliasLoader::getInstance();
+            $loader->alias('TableSoft', \Irpcpro\TableSoft\Facade\TableSoftFacade::class);
+        });
+
         // add alias
 //        $loader = AliasLoader::getInstance();
 //        $this->app->alias('TableSoft', '\Irpcpro\TableSoft\Facade\TableSoftFacade');
