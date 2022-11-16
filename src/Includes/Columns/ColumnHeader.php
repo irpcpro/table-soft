@@ -48,7 +48,7 @@ class ColumnHeader extends ColumnFields
         $this->type = $data->type;
         $this->sort = $data->sort;
         $this->sortBy = $data->sortBy;
-        $this->value = $data->value;
+        $this->value = ($data->value)($data->title ?? '');
         $this->width = $data->width ?? null;
         $this->widthMeasure = $data->widthMeasure;
         $this->searchable = $data->searchable;

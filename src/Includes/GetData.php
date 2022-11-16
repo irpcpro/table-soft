@@ -8,6 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Irpcpro\TableSoft\Includes\CacheTable\CacheTable;
 use Irpcpro\TableSoft\Includes\Columns\ColumnBody;
 use Irpcpro\TableSoft\Includes\Columns\DefineColumn;
 use Irpcpro\TableSoft\Includes\Columns\ColumnHeader;
@@ -27,6 +28,7 @@ class GetData
     private $paginate;
     private QueryParams $queryParam;
     private $paginateMethodRender;
+    private string|null $caching;
 
 
     /**
@@ -34,12 +36,13 @@ class GetData
      * @param DefineColumn[] $columns
      * @param bool $isDataModelBuilder
      * */
-    public function __construct(Collection|Builder $data, array $columns, bool $isDataModelBuilder)
+    public function __construct(Collection|Builder $data, array $columns, bool $isDataModelBuilder, string|null $caching = null)
     {
         // set data
         $this->data = $data;
         $this->columns = collect($columns);
         $this->isDataModelBuilder = $isDataModelBuilder;
+        $this->caching = $caching;
 
         // set query param settings
         $this->setQueryParamsSettings();
@@ -156,7 +159,7 @@ class GetData
                 } else {
                     // handle for row counter
                     if (str_starts_with($columnsetting->name, 'row')) {
-                        $dataFiltered[$item] = new ColumnBody($counterRow++, $columnsetting);
+                        $dataFiltered[$item] = new ColumnBody(($columnsetting->value)($counterRow++), $columnsetting);
                     } else {
                         $dataFiltered[$item] = new ColumnBody('', null);
                     }
@@ -213,7 +216,18 @@ class GetData
      * */
     private function getSortFields(): Collection
     {
-        return $this->columns->whereNotNull('sort');
+        return $this->columns->whereNotNull('sort')->map(function($item){
+            return (object)[
+                'title' => $item->title,
+                'name' => $item->name,
+                'type' => $item->type,
+                'sort' => $item->sort,
+                'sortBy' => $item->sortBy,
+                'width' => $item->width,
+                'widthMeasure' => $item->widthMeasure,
+                'searchable' => $item->searchable,
+            ];
+        });
     }
 
     /**
@@ -305,14 +319,25 @@ class GetData
         'exists' => 'bool',
     ])] public function build(int $paginate = 0): array
     {
+
+        // get data from cache
+        $getDataFromCaching = null;
+        if($this->caching){
+            $getDataFromCaching = (new CacheTable($this->caching, $this->queryParam));
+            $getData = $getDataFromCaching->get();
+            if($getData != null)
+                return $getData;
+        }
+
         $this->paginate = $paginate;
+
         // get head table data
         $this->tableDataHead = $this->makeTableHead();
         // get body table data
         $this->tableDataBody = $this->makeTableBody();
 
         // return list of data
-        return [
+        $finalData = [
             'head' => $this->tableDataHead,
             'body' => $this->tableDataBody,
             'sort_fields' => $this->getSortFields(),
@@ -320,6 +345,12 @@ class GetData
             'query_params' => $this->queryParam->getAllParams(),
             'exists' => (bool)count($this->tableDataBody),
         ];
+
+        if($this->caching && $getDataFromCaching != null){
+            $getDataFromCaching->save($finalData);
+        }
+
+        return $finalData;
     }
 
 }
