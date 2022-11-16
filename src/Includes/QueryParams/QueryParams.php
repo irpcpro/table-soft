@@ -40,7 +40,7 @@ class QueryParams
     // search text setter by request param
     private function setSearchText(): void
     {
-        $this->searchText = clean_text($this->request->input('q'));
+        $this->searchText = clean_text($this->request->input('q'), false);
     }
 
     // current page setter by request param

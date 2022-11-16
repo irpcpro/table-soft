@@ -42,10 +42,16 @@ class TableSoft
      * @var int
      * */
     private int $lastColumnIndex = 0;
+    /**
+     * @var string|null
+     * */
+    private string|null $caching;
+
 
     public function __construct()
     {
         $this->paginateMethodRender = 'pagination::bootstrap-4';
+        $this->caching = null;
     }
 
     /**
@@ -167,6 +173,18 @@ class TableSoft
     }
 
     /**
+     * @param string $id
+     * @return TableSoft
+     */
+    public function setCaching(string $id): TableSoft
+    {
+        if($id != '')
+            $this->caching = clean_text($id);
+
+        return $this;
+    }
+
+    /**
      * @param int $number number of item per page. if 0 paginate never set
      * @param string $renderMethod
      * @return TableSoft
@@ -182,21 +200,21 @@ class TableSoft
      * set counter row to table
      * @return TableSoft
      * */
-    public function rowCounter(string $title = 'Row', string $field = null, string|object $sort = null, object $function = null): TableSoft
+    public function rowCounter(string $title = 'Row', string $field = null, object $function = null): TableSoft
     {
         // just add row counter once
         if ($this->rowCounter == false) {
             $this->rowCounter = true;
 
             // add column
-            $this->column($title, $field, $sort, $function, true);
+            $this->column($title, $field, null, $function, true);
         }
         return $this;
     }
 
     public function get(): array
     {
-        $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder);
+        $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder, $this->caching);
         $build_data = $build_data->setPaginateMethodRender($this->paginateMethodRender);
         $build_data = $build_data->build($this->paginate);
         return $build_data;
