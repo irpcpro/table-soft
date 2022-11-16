@@ -5,6 +5,7 @@ namespace Irpcpro\TableSoft;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 use Irpcpro\TableSoft\Includes\Columns\DefineColumn;
 use Irpcpro\TableSoft\Includes\Columns\ColumnHeader;
 use Irpcpro\TableSoft\Includes\GetData;
@@ -42,6 +43,10 @@ class TableSoft
      * */
     private int $lastColumnIndex = 0;
 
+    public function __construct()
+    {
+        $this->paginateMethodRender = 'pagination::bootstrap-4';
+    }
 
     /**
      * @param Collection|Builder $data
@@ -68,23 +73,50 @@ class TableSoft
      */
     public function column(string $title, string $field = null, string|object $sort = null, object $function = null, bool $addFirst = false): TableSoft
     {
+        // if field name is null, copy from title
         if ($field == null)
-            $field = mb_strtolower($title);
+            $field = $title;
 
-        if (strpos($field, ':') == false)
-            $field .= ':string';
+        // check field
+        $type = 'string';
+        $explodeField = explode(':', $field);
+        if (isset($explodeField[1])) {
+            if (!in_array($explodeField[1], ['int', 'string', 'float', 'date', 'bool']))
+                return $this; // don't add this column
+            $type = $explodeField[1];
+        }
+        $field = preg_replace('/[^A-Za-z0-9\-]/', '', mb_strtolower($explodeField[0])) . ':' . $type;
 
         // return this field. Input Error
         if (is_object($sort) && $function != [])
-            return $this;
+            return $this; // don't add this column
 
+        // check if variable callback function is instead of sort
         if (is_object($sort)) {
             $function = $sort;
             $sort = null;
-        } elseif ($sort != null && strpos($sort, ':') == false) {
-            $sort .= ':asc';
         }
 
+        // check type of sorting if it isn't null
+        if ($sort != null && gettype($sort) == 'string') {
+            if (str_starts_with($sort, 'sort')) {
+                $explodeSort = explode(':', $sort);
+                if (isset($explodeSort[1])) {
+                    if (!in_array($explodeSort[1], ['asc', 'desc']))
+                        return $this; // don't add this column
+                } else {
+                    if ($sort == 'sort') {
+                        $sort .= ':asc';
+                    } else {
+                        return $this; // don't add this column
+                    }
+                }
+            } else {
+                return $this; // don't add this column
+            }
+        }
+
+        // add default closure if $function is null
         if ($function == null)
             $function = function ($value) {
                 return $value;
@@ -125,7 +157,7 @@ class TableSoft
      */
     public function searchable(): TableSoft
     {
-        if (!empty($this->columns)){
+        if (!empty($this->columns)) {
             if ($this->columns[0]->index == $this->lastColumnIndex - 1)
                 $this->columns[0]->setSearchableColumn();
             else
@@ -165,7 +197,9 @@ class TableSoft
     #[ArrayShape([
         'head' => [ColumnHeader::class],
         'body' => Collection::class | LengthAwarePaginator::class,
-        'exists' => 'bool'
+        'exists' => 'bool',
+        'sort' => Collection::class,
+        'pagination' => ['string' | View::class]
     ])] public function get(): array
     {
         $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder);
