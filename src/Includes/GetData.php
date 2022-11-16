@@ -27,7 +27,6 @@ class GetData
     private $tableDataBody;
     private $paginate;
     private QueryParams $queryParam;
-    private $paginateMethodRender;
     private string|null $caching;
 
 
@@ -71,18 +70,6 @@ class GetData
         }
 
         return $data;
-    }
-
-    /**
-     * @return View|string
-     * */
-    private function makePaginateButtons(): View|string
-    {
-        if(count($this->tableDataBody) && $this->tableDataBody && method_exists($this->tableDataBody,'total')){
-            return $this->tableDataBody->appends(request()->except('page'))->render($this->paginateMethodRender);
-        }else{
-            return '';
-        }
     }
 
     /**
@@ -153,6 +140,9 @@ class GetData
                 // get first of column setting
                 $columnsetting = $columnsetting->first();
 
+                if(gettype($allData))
+                    $allData = (object) $allData;
+
                 if (property_exists($allData, $item) || ($this->isDataModelBuilder && $allData->$item)) {
                     // return edited array
                     $dataFiltered[$item] = new ColumnBody(($columnsetting->value)($allData->$item), $columnsetting);
@@ -198,6 +188,9 @@ class GetData
         // filter for search character
         $data = $data->filter(function ($item) use ($searchable_fields) {
             foreach ($searchable_fields as $field) {
+                if(gettype($item) == 'array')
+                    $item = (object)$item;
+
                 if (!($field->name && $item->{$field->name}))
                     continue;
 
@@ -297,16 +290,6 @@ class GetData
     }
 
     /**
-     * @param string $paginateMethodRender
-     * @return GetData
-     */
-    public function setPaginateMethodRender(string $paginateMethodRender): GetData
-    {
-        $this->paginateMethodRender = $paginateMethodRender;
-        return $this;
-    }
-
-    /**
      * @param int $paginate
      * @return array
      */
@@ -314,7 +297,6 @@ class GetData
         'head' => [ColumnHeader::class],
         'body' => (Collection::class | LengthAwarePaginator::class),
         'sort_fields' => Collection::class,
-        'pagination' => ['string' | View::class],
         'query_params' => 'array',
         'exists' => 'bool',
     ])] public function build(int $paginate = 0): array
@@ -341,7 +323,6 @@ class GetData
             'head' => $this->tableDataHead,
             'body' => $this->tableDataBody,
             'sort_fields' => $this->getSortFields(),
-            'pagination' => $this->makePaginateButtons(),
             'query_params' => $this->queryParam->getAllParams(),
             'exists' => (bool)count($this->tableDataBody),
         ];
