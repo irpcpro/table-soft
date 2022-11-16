@@ -208,6 +208,13 @@ class GetData
         return $data;
     }
 
+    /**
+     * @return Collection
+     * */
+    private function getSortFields(): Collection
+    {
+        return $this->columns->whereNotNull('sort');
+    }
 
     /**
      * sorting data
@@ -217,6 +224,23 @@ class GetData
         // if search text is empty, return data
         if (empty($this->queryParam->sort))
             return $data;
+
+        // get sorting field where are exists in data
+        $fields = $this->queryParam->sort
+            ->where('value','!=', 'none')
+            ->whereIn('field',
+                $this->getSortFields()->pluck('name')
+            );
+        if($fields->count()){
+            // map on sorting to change to [['key','sortType'],['key','sortType']]
+            $sortingOption = $fields->map(function($item){
+                return [
+                    $item['field'],
+                    $item['value']
+                ];
+            })->values()->toArray();
+            $data = $data->sortBy($sortingOption);
+        }
 
 
         return $data;
@@ -275,9 +299,10 @@ class GetData
     #[ArrayShape([
         'head' => [ColumnHeader::class],
         'body' => (Collection::class | LengthAwarePaginator::class),
+        'sort_fields' => Collection::class,
+        'pagination' => ['string' | View::class],
+        'query_params' => 'array',
         'exists' => 'bool',
-        'sort' => Collection::class,
-        'pagination' => ['string' | View::class]
     ])] public function build(int $paginate = 0): array
     {
         $this->paginate = $paginate;
@@ -290,9 +315,10 @@ class GetData
         return [
             'head' => $this->tableDataHead,
             'body' => $this->tableDataBody,
-            'exists' => (bool)count($this->tableDataBody),
-            'sort' => $this->queryParam->sort,
+            'sort_fields' => $this->getSortFields(),
             'pagination' => $this->makePaginateButtons(),
+            'query_params' => $this->queryParam->getAllParams(),
+            'exists' => (bool)count($this->tableDataBody),
         ];
     }
 
