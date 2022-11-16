@@ -10,14 +10,18 @@
 
 Register the TableSoft service provider by adding it to the providers in `config/app.php` file.
 ```php
-'providers' => array(
+'providers' => [
+    ...
+    ...
     \Irpcpro\TableSoft\ServiceProviders\TableSoftServiceProvider::class,
-)
+]
 ```
 
 If you want you can alias the TableSoft facade by adding it to the aliases in `config/app.php` file.
 ```php
-'aliases' => array(
+'aliases' => Facade::defaultAliases()->merge([
+    ...
+    ...
     'TableSoft' => \Irpcpro\TableSoft\Facade\TableSoftFacade::class,
-)
+])->toArray(),
 ```
