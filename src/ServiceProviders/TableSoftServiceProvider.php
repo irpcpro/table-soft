@@ -23,6 +23,10 @@ class TableSoftServiceProvider extends ServiceProvider
 
 
 
+        $this->app->singleton('TableSoft', function ($app) {
+            return new TableSoft;
+        });
+
         // add alias
 //        $loader = AliasLoader::getInstance();
 //        $this->app->alias('TableSoft', '\Irpcpro\TableSoft\Facade\TableSoftFacade');

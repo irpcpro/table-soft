@@ -18,10 +18,5 @@
     "require": {
         "php": "^8.0",
         "illuminate/support": ">=5.0.0"
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "@php artisan package:discover"
-        ]
     }
 }
