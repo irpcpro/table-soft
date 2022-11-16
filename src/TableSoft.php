@@ -171,7 +171,7 @@ class TableSoft
      * @param string $renderMethod
      * @return TableSoft
      * */
-    public function paginate(int $number, string $renderMethod = 'pagination::bootstrap-4'): TableSoft
+    public function paginate(int $number = 0, string $renderMethod = 'pagination::bootstrap-4'): TableSoft
     {
         $this->paginate = $number;
         $this->paginateMethodRender = $renderMethod;
@@ -194,13 +194,7 @@ class TableSoft
         return $this;
     }
 
-    #[ArrayShape([
-        'head' => [ColumnHeader::class],
-        'body' => Collection::class | LengthAwarePaginator::class,
-        'exists' => 'bool',
-        'sort' => Collection::class,
-        'pagination' => ['string' | View::class]
-    ])] public function get(): array
+    public function get(): array
     {
         $build_data = new GetData($this->data, $this->columns, $this->isDataModelBuilder);
         $build_data = $build_data->setPaginateMethodRender($this->paginateMethodRender);

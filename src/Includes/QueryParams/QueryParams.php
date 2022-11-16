@@ -4,13 +4,14 @@ namespace Irpcpro\TableSoft\Includes\QueryParams;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\ArrayShape;
 
 class QueryParams
 {
     /**
      * @var Request
      * */
-    private $request;
+    private Request $request;
     /**
      * @var string|null
      * */
@@ -59,9 +60,13 @@ class QueryParams
                 if($ifExistsSort === false)
                     return false;
 
-                // check the second parameter, field name should exists
+                // check the second parameter, field name should exist
                 $getFieldName = explode('-', $key);
                 if(!isset($getFieldName[1]) || ($getFieldName[1] == ''))
+                    return false;
+
+                // check value of sorting
+                if(!in_array($value, ['asc','desc','none']))
                     return false;
 
                 // return parameters as sort
@@ -80,4 +85,20 @@ class QueryParams
         }
     }
 
+    /**
+     * public access params
+     * @return array
+     * */
+    #[ArrayShape([
+        'searchText' => "null|string",
+        'currentPage' => "int",
+        'sort' => Collection::class
+    ])] public function getAllParams(): array
+    {
+        return [
+            'searchText' => $this->searchText,
+            'currentPage' => $this->currentPage,
+            'sort' => $this->sort
+        ];
+    }
 }
