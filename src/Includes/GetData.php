@@ -2,10 +2,12 @@
 
 namespace Irpcpro\TableSoft\Includes;
 
+use http\Encoding\Stream;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Irpcpro\TableSoft\Includes\Columns\ColumnBody;
 use Irpcpro\TableSoft\Includes\Columns\DefineColumn;
 use Irpcpro\TableSoft\Includes\Columns\ColumnHeader;
@@ -68,9 +70,15 @@ class GetData
         return $data;
     }
 
-    private function makePaginateButtons(){
+    /**
+     * @return View|string
+     * */
+    private function makePaginateButtons(): View|string
+    {
         if(count($this->tableDataBody) && $this->tableDataBody && method_exists($this->tableDataBody,'total')){
             return $this->tableDataBody->appends(request()->except('page'))->render($this->paginateMethodRender);
+        }else{
+            return '';
         }
     }
 
@@ -202,6 +210,19 @@ class GetData
 
 
     /**
+     * sorting data
+     * */
+    private function sortingData($data)
+    {
+        // if search text is empty, return data
+        if (empty($this->queryParam->sort))
+            return $data;
+
+
+        return $data;
+    }
+
+    /**
      * @return Collection|LengthAwarePaginator
      * */
     private function makeTableBody(): Collection|LengthAwarePaginator
@@ -224,11 +245,11 @@ class GetData
         // searching on data if exists any field searchable
         $out = $this->searchingData($out);
 
+        // sort field
+        $out = $this->sortingData($out);
 
         // set paginate to list
         $out = $this->paginate($out);
-
-
 
         // mapping on data to change
         $out = $this->mappingData($out, $getFieldNames, $columnsGroupBy);
@@ -254,7 +275,9 @@ class GetData
     #[ArrayShape([
         'head' => [ColumnHeader::class],
         'body' => (Collection::class | LengthAwarePaginator::class),
-        'exists' => 'bool'
+        'exists' => 'bool',
+        'sort' => Collection::class,
+        'pagination' => ['string' | View::class]
     ])] public function build(int $paginate = 0): array
     {
         $this->paginate = $paginate;
@@ -268,7 +291,8 @@ class GetData
             'head' => $this->tableDataHead,
             'body' => $this->tableDataBody,
             'exists' => (bool)count($this->tableDataBody),
-            'pagination' => $this->makePaginateButtons()
+            'sort' => $this->queryParam->sort,
+            'pagination' => $this->makePaginateButtons(),
         ];
     }
 
