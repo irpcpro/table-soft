@@ -16,7 +16,6 @@ class TableSoftTestControllers extends Controller
 //        $data1 = productData();
 
 //        $data1 = new Product();
-//        $data1 = $data1->where('created_at', '!=', '');
 
 
         $data1 = Http::get('https://dummyjson.com/products');

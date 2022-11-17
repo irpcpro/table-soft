@@ -11,10 +11,13 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-4">
                     <h1>welcome ....</h1>
-                    <a href="{{route('tableview.tableSetting')}}">
+                    <a href="{{route('tableSoft.managementTable')}}">
+                        <button class="btn btn-dark">View table</button>
+                    </a>
+                    <a href="{{route('tableSoft.tableSetting')}}">
                         <button class="btn btn-primary">Table setting</button>
                     </a>
-                    <form action="{{route('tableview.logout')}}" method="post" class="mt-2">
+                    <form action="{{route('tableSoft.logout')}}" method="post" class="mt-2">
                         <button class="btn btn-danger">Logout</button>
                         @csrf
                     </form>
