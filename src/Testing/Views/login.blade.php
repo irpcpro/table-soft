@@ -11,7 +11,7 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-4">
                     <h1>Bugloos login</h1>
-                    <form action="{{route('tableview.login.post')}}" method="post">
+                    <form action="{{route('tableSoft.login.post')}}" method="post">
                         <div class="form-control">
                             <label for="email">Email:</label>
                             <input id="email" name="email" type="email" class="form-control" value="{{old('email')}}">

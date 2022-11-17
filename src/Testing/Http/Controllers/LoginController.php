@@ -36,13 +36,13 @@ class LoginController extends Controller
         }
 
         Auth::login(User::where('email', $request->email)->first());
-        return redirect()->route('tableview.home');
+        return redirect()->route('tableSoft.home');
     }
 
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('tableview.login');
+        return redirect()->route('tableSoft.login');
     }
 
 }
