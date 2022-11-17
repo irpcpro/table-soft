@@ -2,6 +2,7 @@
 
 namespace Irpcpro\TableSoft\Testing\Http\Controllers;
 
+use Illuminate\Support\Facades\Http;
 use Irpcpro\TableSoft\Testing\Http\Controllers\TableSoftControllers as Controller;
 use Irpcpro\TableSoft\Testing\Models\Product;
 use TableSoft;
@@ -12,16 +13,16 @@ class TableSoftTestControllers extends Controller
     public function index()
     {
 
-        $data1 = productData();
+//        $data1 = productData();
 
-        $data2 = new Product();
-        $data2 = $data2->where('created_at', '!=', '');
+//        $data1 = new Product();
+//        $data1 = $data1->where('created_at', '!=', '');
 
 
-//        $data3 = Http::get('https://dummyjson.com/products');
-//        $data3 = collect($data3->json()['products']);
+        $data1 = Http::get('https://dummyjson.com/products');
+        $data1 = collect($data1->json()['products']);
 
-        $table = TableSoft::data($data2);
+        $table = TableSoft::data($data1);
         $table = $table->column('Title', 'title:string', 'sort')->searchable();
         $table = $table->column('Image', 'thumbnail:string', function($value){
             return "<img width='70px' height='20px' src='$value?ver=1'/>";
