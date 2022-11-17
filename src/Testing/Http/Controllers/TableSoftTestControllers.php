@@ -31,7 +31,7 @@ class TableSoftTestControllers extends Controller
             return $value . '$';
         })->setWidth(50, 'px')->searchable();
         $table = $table->rowCounter('row')->setWidth(20,'px');
-        $table = $table->setCaching('table-product4');
+//        $table = $table->setCaching('table-product4');
         $table = $table->paginate(10);
         $data = $table->get();
 

@@ -140,7 +140,7 @@ class GetData
                 // get first of column setting
                 $columnsetting = $columnsetting->first();
 
-                if(gettype($allData))
+                if(gettype($allData) == 'array')
                     $allData = (object) $allData;
 
                 if (property_exists($allData, $item) || ($this->isDataModelBuilder && $allData->$item)) {

@@ -26,7 +26,7 @@ If you want you can alias the TableSoft facade by adding it to the aliases in `c
 ])->toArray(),
 ```
 
-#Configurations
+# Configurations
 
 ----
 * Pass Collection or Builder data into the facade.
@@ -139,7 +139,7 @@ $table->rowCounter('row', 'row-name:string', function($val){
     return $value;
 });
 ```
-<h5>Important: the field name should start with `sort-`</h5>
+<h5>Important: the field name should start with `row`</h5>
 
 <h3>set paginate for list:</h3>
 
