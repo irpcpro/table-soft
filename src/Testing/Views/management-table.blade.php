@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="row">
-                    @if($data['sort_fields'] && !empty($data['sort_fields']))
+                    @if(!empty($data['sort_fields']) && $data['sort_fields'])
                         @foreach($data['sort_fields'] as $item)
                             <div class="col-12">
                                 <span class="font-weight-bold text-dark">{{$item->title}}:</span>

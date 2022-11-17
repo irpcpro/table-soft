@@ -15,7 +15,7 @@ class TableSoftTestControllers extends Controller
 
 //        $data1 = productData();
 
-//        $data1 = new Product();
+//        $data1 = Product::query();
 
 
         $data1 = Http::get('https://dummyjson.com/products');
@@ -31,7 +31,8 @@ class TableSoftTestControllers extends Controller
             return $value . '$';
         })->setWidth(50, 'px')->searchable();
         $table = $table->rowCounter('row')->setWidth(20,'px');
-//        $table = $table->setCaching('table-product4');
+        $table = $table->setCaching('table-product4');
+        $table = $table->paginate(10);
         $data = $table->get();
 
         return view('tableSoft::table-soft-test', compact('data'));
