@@ -67,8 +67,8 @@
         <div class="form-group">
             <label for="searchable_[]">Searchable</label><br/>
             <select class="form-control" name="searchable_[]" id="searchable_[]">
-                <option {{$searchable? 'selected' : ''}} value="yes">yes</option>
-                <option {{!$searchable? 'selected' : ''}} value="no">no</option>
+                <option {{(isset($searchable) && $searchable)? 'selected' : ''}} value="yes">yes</option>
+                <option {{(isset($searchable) && !$searchable)? 'selected' : ''}} value="no">no</option>
             </select><br/>
             @error('searchable_.*')
                 <div class="alert-danger">{{$message}}</div>

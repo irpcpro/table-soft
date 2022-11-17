@@ -87,18 +87,18 @@ class DashboardController
 
     public function managementTable()
     {
-        $data = collect([]);
+        // get data
+        $data = Product::query();
+
         // get table settings
         $tableSetting = TableSetting::query();
-        if($tableSetting->exists()){
-            // get data
-            $data = Product::query();
 
+        // mage table soft
+        $table = TableSoft::data($data);
+
+        if($tableSetting->exists()){
             // get table setting
             $tableSetting = $tableSetting->first();
-
-            // mage table soft
-            $table = TableSoft::data($data);
 
             // make fields
             foreach ($tableSetting->fields as $field) {
@@ -116,9 +116,9 @@ class DashboardController
 
             if($tableSetting->paginate != 0)
                 $table = $table->paginate($tableSetting->paginate);
-
-            $data = $table->get();
         }
+
+        $data = $table->get();
 
         // return view
         return view('tableSoft::management-table', compact('data'));
