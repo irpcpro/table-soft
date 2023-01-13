@@ -1,11 +1,14 @@
 {
     "name": "irpcpro/table-soft",
-    "description": "A package for managing table data - Bugloos Test",
-    "version": "1.0.0",
+    "description": "A package for managing table data.convert model data to objects of table.",
+    "keywords": ["model_to_table", "laravel", "package", "filter_model", "draw_table"],
+    "version": "2.0.0",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
-            "name": "irpcpro",
-            "email": "designer.pcpro@yahoo.com"
+            "name": "IRPCPRO",
+            "email": "irpcpro@yahoo.com"
         }
     ],
     "autoload": {
@@ -29,5 +32,7 @@
                 "Debugbar": "Irpcpro\\TableSoft\\Facade\\TableSoftFacade"
             }
         }
-    }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable" : true
 }

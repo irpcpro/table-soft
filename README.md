@@ -1,13 +1,21 @@
 <h1>Table Soft</h1>
-<h4>BugLoos TEST</h4>
-<ul>
-    <li>Author: <span>IRPCPRO</span></li>
-    <li>Email: <span>designer.pcpro@yahoo.com</span></li>
-</ul>
-<p>A package for managing table data</p>
-<h2>Installing</h2>
+
+**Version:**
+<span>2.0.0</span>
+
+<p>A package for managing table data.
+convert your model or list of your data to table object, easily..</p>
+
+[![Latest Stable Version](http://poser.pugx.org/irpcpro/table-soft/v)](https://packagist.org/packages/irpcpro/table-soft) [![Total Downloads](http://poser.pugx.org/irpcpro/table-soft/downloads)](https://packagist.org/packages/irpcpro/table-soft) [![Latest Unstable Version](http://poser.pugx.org/irpcpro/table-soft/v/unstable)](https://packagist.org/packages/irpcpro/table-soft) [![License](http://poser.pugx.org/irpcpro/table-soft/license)](https://packagist.org/packages/irpcpro/table-soft) [![PHP Version Require](http://poser.pugx.org/irpcpro/table-soft/require/php)](https://packagist.org/packages/irpcpro/table-soft)
+
+<h2>Installation</h2>
 
 ----
+install package to your laravel project:
+```
+composer require irpcpro/table-soft
+```
+
 Register the TableSoft service provider by adding it to the providers in `config/app.php` file.
 ```php
 'providers' => [

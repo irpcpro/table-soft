@@ -31,18 +31,6 @@ class TableSoftServiceProvider extends ServiceProvider
             ];
             return new LengthAwarePaginator($results, $total, $perPage, $page, $options);
         });
-
-        // add package routes to system
-        $this->loadRoutesFrom(__DIR__ . '/../Testing/Routes/routes.php');
-
-        // add tag view
-        $this->loadViewsFrom(__DIR__ . '/../Testing/Views', 'tableSoft');
-
-        // publish file to project
-        $this->publishes([
-            __DIR__ . '/../Testing/Public' => public_path('/'),
-            __DIR__ . '/../Testing/Migrations' => database_path('/migrations/'),
-        ], 'Irpcpro-Publish');
     }
 
 }
