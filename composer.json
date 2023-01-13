@@ -29,7 +29,7 @@
                 "Irpcpro\\TableSoft\\ServiceProviders\\TableSoftServiceProvider"
             ],
             "aliases": {
-                "Debugbar": "Irpcpro\\TableSoft\\Facade\\TableSoftFacade"
+                "TableSoft": "Irpcpro\\TableSoft\\Facade\\TableSoftFacade"
             }
         }
     },
