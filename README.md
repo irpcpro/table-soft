@@ -8,6 +8,8 @@ convert your model or list of your data to table object, easily..</p>
 
 [![Latest Stable Version](http://poser.pugx.org/irpcpro/table-soft/v)](https://packagist.org/packages/irpcpro/table-soft) [![Total Downloads](http://poser.pugx.org/irpcpro/table-soft/downloads)](https://packagist.org/packages/irpcpro/table-soft) [![Latest Unstable Version](http://poser.pugx.org/irpcpro/table-soft/v/unstable)](https://packagist.org/packages/irpcpro/table-soft) [![License](http://poser.pugx.org/irpcpro/table-soft/license)](https://packagist.org/packages/irpcpro/table-soft) [![PHP Version Require](http://poser.pugx.org/irpcpro/table-soft/require/php)](https://packagist.org/packages/irpcpro/table-soft)
 
+![TableSoft](./src/Helpers/table-soft-image.jpg)
+
 <h2>Installation</h2>
 
 ----
